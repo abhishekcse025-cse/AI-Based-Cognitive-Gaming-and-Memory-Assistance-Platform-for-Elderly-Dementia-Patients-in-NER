@@ -124,3 +124,43 @@ def get_all_sessions():
     connection.close()
 
     return rows
+
+def get_unsynced_sessions():
+    connection = sqlite3.connect(DATABASE_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            session_id,
+            patient_id,
+            game_type,
+            difficulty,
+            total_moves,
+            error_count,
+            time_taken_sec,
+            completed,
+            timestamp,
+            sync_status
+        FROM game_sessions
+        WHERE sync_status = 0
+        ORDER BY timestamp ASC
+    """)
+
+    rows = cursor.fetchall()
+    connection.close()
+
+    return rows
+
+
+def mark_as_synced(session_id):
+    connection = sqlite3.connect(DATABASE_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE game_sessions
+        SET sync_status = 1
+        WHERE session_id = ?
+    """, (session_id,))
+
+    connection.commit()
+    connection.close()
