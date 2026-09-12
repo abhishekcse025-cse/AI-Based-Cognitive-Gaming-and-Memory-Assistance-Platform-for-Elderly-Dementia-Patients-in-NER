@@ -1,0 +1,7 @@
+game_sessions.db
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+old_Version1_adaptive_difficulty.py
