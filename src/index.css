@@ -1,0 +1,225 @@
+/* ── Google Fonts Import — must be first ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+/* COGNIVA Design Token System — Warm · Intelligent · Premium · Human */
+
+@layer base {
+  :root {
+    /* Brand Colors — Warm Cognitive Palette */
+    --color-primary: 124 92 252;        /* #7C5CFC soft violet */
+    --color-primary-light: 167 139 250; /* #A78BFA lavender */
+    --color-primary-dark: 91 53 234;    /* #5B35EA */
+
+    --color-secondary: 249 115 22;      /* #F97316 warm amber */
+    --color-secondary-light: 251 146 60;/* #FB923C */
+
+    --color-mira: 167 139 250;          /* #A78BFA MIRA signature */
+    --color-mira-glow: 139 92 246;      /* #8B5CF6 */
+
+    /* Surfaces — Warm Parchment */
+    --color-surface-bg: 252 249 245;    /* warm off-white */
+    --color-surface-card: 255 255 255;
+    --color-surface-elevated: 255 255 255;
+    --color-surface-overlay: 15 15 30;
+
+    /* Text */
+    --color-text-primary: 28 25 23;     /* #1C1917 warm near-black */
+    --color-text-secondary: 120 113 108;/* #78716C warm gray */
+    --color-text-muted: 168 162 158;
+    --color-text-inverse: 255 255 255;
+
+    /* Semantic */
+    --color-success: 16 185 129;        /* #10B981 */
+    --color-warning: 251 191 36;        /* #FBBF24 */
+    --color-error: 239 68 68;           /* #EF4444 */
+    --color-info: 59 130 246;           /* #3B82F6 */
+
+    /* Card Color Tokens */
+    --card-play: 236 220 255;           /* lavender tint */
+    --card-play-icon: 124 92 252;
+    --card-myday: 255 235 205;          /* peach tint */
+    --card-myday-icon: 249 115 22;
+    --card-reminders: 204 240 228;      /* mint tint */
+    --card-reminders-icon: 16 185 129;
+    --card-family: 255 226 226;         /* rose tint */
+    --card-family-icon: 239 68 68;
+    --card-mira: 220 210 255;           /* violet tint */
+    --card-mira-icon: 91 53 234;
+
+    /* Spacing & Sizing */
+    --touch-min: 64px;
+    --touch-comfortable: 80px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-full: 9999px;
+
+    /* Typography Scale — Standard */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+
+    /* Shadows */
+    --shadow-card: 0 4px 24px -4px rgba(124, 92, 252, 0.12), 0 1px 4px rgba(0,0,0,0.06);
+    --shadow-float: 0 8px 40px -8px rgba(124, 92, 252, 0.3), 0 2px 8px rgba(0,0,0,0.1);
+    --shadow-mira: 0 0 40px 8px rgba(167, 139, 250, 0.4);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* Safe areas */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* ── Text Size Overrides ── */
+  [data-text-size="large"] {
+    --text-base: 1.125rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 1.75rem;
+    --text-3xl: 2.25rem;
+    --text-4xl: 2.75rem;
+    --text-5xl: 3.5rem;
+  }
+
+  [data-text-size="extra-large"] {
+    --text-base: 1.25rem;
+    --text-lg: 1.5rem;
+    --text-xl: 1.75rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.5rem;
+    --text-4xl: 3rem;
+    --text-5xl: 4rem;
+    --touch-min: 72px;
+    --touch-comfortable: 88px;
+  }
+
+  /* ── High Contrast Overrides ── */
+  [data-contrast="high-contrast"] {
+    --color-surface-bg: 0 0 0;
+    --color-surface-card: 15 15 15;
+    --color-text-primary: 255 255 255;
+    --color-text-secondary: 220 220 220;
+    --color-text-muted: 180 180 180;
+    --card-play: 30 0 80;
+    --card-play-icon: 200 170 255;
+    --card-myday: 80 30 0;
+    --card-myday-icon: 255 180 100;
+    --card-reminders: 0 60 30;
+    --card-reminders-icon: 100 255 180;
+    --card-family: 80 0 0;
+    --card-family-icon: 255 130 130;
+    --card-mira: 20 0 80;
+    --card-mira-icon: 200 180 255;
+    --shadow-card: 0 0 0 2px rgba(255,255,255,0.3);
+  }
+
+  /* ── Reduced Motion ── */
+  [data-reduced-motion="true"] * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* ── Base Styles ── */
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: rgb(var(--color-surface-bg));
+    color: rgb(var(--color-text-primary));
+    font-family: 'Inter', 'Nunito', system-ui, -apple-system, sans-serif;
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+
+  /* Focus visible — premium ring */
+  :focus-visible {
+    outline: 3px solid rgb(var(--color-primary));
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Touch targets — enforce minimum */
+  button, [role="button"], a {
+    min-height: var(--touch-min);
+    cursor: pointer;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgb(var(--color-text-muted)); border-radius: 3px; }
+}
+
+
+/* ── Gradient Utilities ── */
+@layer utilities {
+  .bg-cogniva-gradient {
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-surface-bg)) 0%,
+      rgb(252, 247, 255) 50%,
+      rgb(255, 249, 245) 100%
+    );
+  }
+
+  .bg-mira-gradient {
+    background: radial-gradient(
+      circle at center,
+      rgb(var(--color-mira)) 0%,
+      rgb(var(--color-primary)) 60%,
+      rgb(var(--color-primary-dark)) 100%
+    );
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-mira)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .float-shadow {
+    box-shadow: var(--shadow-float);
+  }
+
+  .mira-glow {
+    box-shadow: var(--shadow-mira);
+  }
+
+  /* Touch target safe sizes */
+  .touch-target {
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+  }
+
+  .touch-target-comfortable {
+    min-height: var(--touch-comfortable);
+    min-width: var(--touch-comfortable);
+  }
+}
