@@ -11,8 +11,12 @@
 
 import { getSessions, markSynced, getUnsyncedCount } from '../utils/storage';
 
-// ── API URL — dynamically uses current hostname for mobile dev testing ────────
-const API_URL = `http://${window.location.hostname}:5000/api`;
+// ── API URL ───────────────────────────────────────────────────────────────────
+// In production (Vercel) → VITE_API_URL env var points to Render.com backend
+// In local dev           → falls back to same hostname on port 5000
+const API_URL = import.meta.env.VITE_API_URL
+  ? String(import.meta.env.VITE_API_URL).replace(/\/$/, '')   // strip trailing slash
+  : `http://${window.location.hostname}:5000/api`;
 
 // ── Sync state ────────────────────────────────────────────────────────────────
 

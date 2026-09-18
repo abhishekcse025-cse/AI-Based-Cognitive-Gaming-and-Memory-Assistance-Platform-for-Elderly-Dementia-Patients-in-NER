@@ -5,6 +5,15 @@
 
 ---
 
+## 🚀 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** (Vercel) | *(set after deployment)* |
+| **Backend API** (Render) | *(set after deployment)* |
+
+---
+
 ## ✨ Features
 
 | Phase | Feature |
@@ -17,7 +26,7 @@
 
 ---
 
-## 🚀 Quick Start — Run on Any Computer
+## 🖥️ Run Locally — Any Computer
 
 ### Prerequisites
 
@@ -27,64 +36,106 @@
 | Python | 3.10 or higher | https://www.python.org |
 | Git | any | https://git-scm.com |
 
----
-
-### Step 1 — Clone the repository
+### Step 1 — Clone
 
 ```bash
 git clone https://github.com/abhishekcse025-cse/AI-Based-Cognitive-Gaming-and-Memory-Assistance-Platform-for-Elderly-Dementia-Patients-in-NER.git
 cd AI-Based-Cognitive-Gaming-and-Memory-Assistance-Platform-for-Elderly-Dementia-Patients-in-NER
 ```
 
----
-
-### Step 2 — Install frontend dependencies
+### Step 2 — Install dependencies
 
 ```bash
+# Frontend
 npm install
+
+# Backend
+pip install -r backend/requirements.txt
 ```
 
----
+### Step 3 — Start both servers
 
-### Step 3 — Install backend dependencies
+**Windows — double-click `start.bat`**
 
-```bash
-cd backend
-pip install flask flask-cors
-cd ..
-```
-
----
-
-### Step 4 — Run the app (two terminals)
-
-**Terminal 1 — Frontend (React)**
-```bash
-npm run dev
-```
-Open **http://localhost:5173** in your browser.
-
-**Terminal 2 — Backend (Flask API)**
-```bash
-# Windows
-python backend/app.py
-
-# Mac / Linux
-python3 backend/app.py
-```
-API runs on **http://localhost:5000**.
-
----
-
-### ⚡ One-command start (Windows)
-
-Double-click **`start.bat`** in the project root — it opens both servers automatically.
-
-### ⚡ One-command start (Mac / Linux)
-
+**Mac / Linux:**
 ```bash
 chmod +x start.sh && ./start.sh
 ```
+
+**Or manually (two terminals):**
+```bash
+# Terminal 1 — Frontend (accessible on your LAN too)
+npm run dev
+
+# Terminal 2 — Backend
+python backend/app.py   # Windows
+python3 backend/app.py  # Mac/Linux
+```
+
+Open **http://localhost:5173** — or from another device on the same WiFi: **http://YOUR-IP:5173**
+
+---
+
+## ☁️ Deploy to the Internet (Vercel + Render)
+
+### Architecture
+
+```
+Browser / Mobile
+      ↓
+ Vercel (React SPA)  ──→  Render.com (Flask API)  ──→  SQLite DB
+```
+
+---
+
+### Step A — Deploy Backend to Render.com (FREE)
+
+1. Go to **https://render.com** → Sign up / Log in
+2. Click **"New +"** → **"Web Service"**
+3. Connect your GitHub repo
+4. Configure:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `cogniva-api` |
+| **Root Directory** | `backend` |
+| **Runtime** | `Python 3` |
+| **Build Command** | `pip install -r requirements.txt` |
+| **Start Command** | `gunicorn app:app --bind 0.0.0.0:$PORT` |
+| **Instance Type** | Free |
+
+5. Click **"Create Web Service"**
+6. Wait ~2 minutes → Render gives you a URL like:
+   ```
+   https://cogniva-api.onrender.com
+   ```
+   Test it: `https://cogniva-api.onrender.com/api/health` → should return `{"status":"ok"}`
+
+---
+
+### Step B — Deploy Frontend to Vercel (FREE)
+
+1. Go to **https://vercel.com** → Sign up / Log in with GitHub
+2. Click **"Add New Project"** → Import your GitHub repo
+3. Configure:
+
+| Field | Value |
+|-------|-------|
+| **Framework Preset** | `Vite` |
+| **Root Directory** | `.` (leave default) |
+| **Build Command** | `npm run build` |
+| **Output Directory** | `dist` |
+
+4. Add **Environment Variable**:
+
+| Key | Value |
+|-----|-------|
+| `VITE_API_URL` | `https://cogniva-api.onrender.com/api` ← your Render URL |
+
+5. Click **"Deploy"**
+6. Vercel gives you a URL like: `https://cogniva-abc123.vercel.app`
+
+> 🎉 Share that Vercel URL — anyone can open the app on any device anywhere in the world!
 
 ---
 
@@ -93,34 +144,34 @@ chmod +x start.sh && ./start.sh
 ```
 cogniva-frontend/
 ├── backend/
-│   ├── app.py              # Flask REST API (SQLite WAL, /api/sync, /api/analytics)
-│   └── requirements.txt    # Python dependencies
+│   ├── app.py              # Flask REST API
+│   ├── requirements.txt    # flask, flask-cors, gunicorn
+│   ├── Procfile            # Render.com start command
+│   └── cogniva.db          # SQLite database (auto-created)
 ├── src/
 │   ├── components/
-│   │   ├── patient/        # PatientHomeScreen, ActionCards, GreetingHeader, BottomNav
-│   │   ├── mira/           # MIRA floating assistant button + panel
-│   │   ├── accessibility/  # TextSize, Contrast, Motion, Language settings panel
+│   │   ├── patient/        # Home screen, action cards, bottom nav
+│   │   ├── mira/           # MIRA floating assistant
+│   │   ├── accessibility/  # Settings panel (font/contrast/language)
 │   │   └── layout/         # AppShell, PatientLayout
 │   ├── context/
-│   │   ├── AccessibilityContext.tsx   # Font size, contrast, language (persisted)
-│   │   ├── LanguageContext.tsx        # Dictionary engine (en/hi/as)
-│   │   └── MiraContext.tsx            # MIRA voice assistant state
+│   │   ├── AccessibilityContext.tsx
+│   │   ├── LanguageContext.tsx   # en / hi / as dictionary
+│   │   └── MiraContext.tsx
 │   ├── games/
-│   │   ├── MemoryMatch.tsx    # AI adaptive card-matching game (levels 1–4)
-│   │   ├── DailySequence.tsx  # Daily routine recall game
-│   │   └── GameShared.tsx     # Shared GameHeader, StatsBar, CompletionScreen
+│   │   ├── MemoryMatch.tsx       # AI adaptive card-matching
+│   │   ├── DailySequence.tsx     # Daily routine recall
+│   │   └── GameShared.tsx
 │   ├── screens/
-│   │   ├── GameHub.tsx              # Game selector
-│   │   ├── CaregiverDashboard.tsx   # Analytics charts (Recharts)
-│   │   └── PlaceholderScreens.tsx   # MyDay, Reminders, Memories, Settings
-│   ├── services/
-│   │   └── syncService.ts    # Offline-first sync bridge
-│   └── utils/
-│       ├── adaptiveEngine.ts # Staircase difficulty algorithm
-│       └── storage.ts        # localStorage session management
+│   │   ├── GameHub.tsx
+│   │   ├── CaregiverDashboard.tsx
+│   │   └── PlaceholderScreens.tsx
+│   └── services/
+│       └── syncService.ts        # Offline-first sync bridge
+├── vercel.json             # Vercel SPA routing + caching
 ├── start.bat               # Windows one-click launcher
 ├── start.sh                # Mac/Linux one-click launcher
-└── vite.config.ts          # Vite + PWA config
+└── vite.config.ts          # Vite + PWA + network host
 ```
 
 ---
@@ -130,38 +181,22 @@ cogniva-frontend/
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check |
-| POST | `/api/sync` | Sync game sessions (idempotent upserts) |
+| POST | `/api/sync` | Sync game sessions |
 | GET | `/api/analytics` | Moving average trends + attention flag |
 
 ---
 
-## 🎮 Cognitive Games
-
-### Memory Match
-- NE Indian cultural emojis: 🦏 Rhino, 🧣 Gamusa, 🎋 Bamboo, ☕ Assamese Tea, 🌸 Orchid, 🐘 Elephant
-- **AI Adaptive Engine**: 4 levels (3/4/5/6 pairs), auto-adjusts difficulty based on accuracy & time
-- 2-Miss Rule: subtle hint after missing the same pair twice
-- 12s idle hint: gentle pulse if no interaction
-
-### Daily Sequence
-- Arrange familiar daily activities in the correct order
-- Large 80px touch targets with up/down arrow controls
-
----
-
-## ♿ Accessibility Features
+## ♿ Accessibility
 
 - Minimum **64px touch targets** throughout
-- **Text size control**: Small / Default / Large / Extra-Large
+- **Text size control** — Small / Default / Large / Extra-Large  
 - **High contrast mode**
-- **Reduced motion** toggle (respects OS preference)
-- **Multi-language**: English / हिंदी (Hindi) / অসমীয়া (Assamese)
-
----
+- **Reduced motion** toggle (respects OS `prefers-reduced-motion`)
+- **Multi-language** — English / हिंदी / অসমীয়া
 
 ## 🔒 Caregiver Access
 
-Hold the discreet 🔒 lock icon in the top-right corner of the home screen for **1.5 seconds** to access the Caregiver Analytics Dashboard.
+Hold the discreet 🔒 lock icon (top-right, 25% opacity) for **1.5 seconds** → opens the Caregiver Analytics Dashboard.
 
 ---
 
@@ -170,19 +205,13 @@ Hold the discreet 🔒 lock icon in the top-right corner of the home screen for 
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React 18 + TypeScript + Vite 8 |
-| Styling | Tailwind CSS v4 + CSS custom properties |
+| Styling | Tailwind CSS v4 |
 | Animation | Framer Motion |
 | Charts | Recharts |
 | PWA | vite-plugin-pwa (Workbox) |
-| Backend | Python Flask 3 + Flask-CORS |
+| Backend | Python Flask 3 + gunicorn |
 | Database | SQLite (WAL mode) |
-| Icons | Lucide React |
-
----
-
-## 📸 Screenshots
-
-> Patient Home Screen · Memory Match Game · Caregiver Dashboard · Hindi Localisation
+| Hosting | Vercel (frontend) + Render.com (backend) |
 
 ---
 

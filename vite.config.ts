@@ -5,6 +5,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Expose dev server on all network interfaces so other devices on the
+  // same WiFi/LAN can open the app at http://<your-ip>:5173
+  server: {
+    host: true,   // equivalent to --host 0.0.0.0
+    port: 5173,
+  },
   plugins: [
     react(),
     tailwindcss(),

@@ -1,8 +1,9 @@
 """
 COGNIVA Backend — Phase 3 & 4
-Flask REST API  •  SQLite (WAL mode)  •  Port 5000
+Flask REST API  •  SQLite (WAL mode)
 
-Run:  python app.py
+Local dev:  python app.py            → http://localhost:5000
+Production: gunicorn app:app          → Render.com auto-assigns $PORT
 """
 
 from __future__ import annotations
@@ -187,5 +188,7 @@ def health():
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("COGNIVA API running on http://0.0.0.0:5000")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_ENV") != "production"
+    print(f"COGNIVA API running on http://0.0.0.0:{port}")
+    app.run(host="0.0.0.0", port=port, debug=debug)
