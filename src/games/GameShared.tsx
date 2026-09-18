@@ -26,10 +26,10 @@ export function GameHeader({ title, onBack, onReset, syncTrigger, children }: Ga
         <button
           onClick={onBack}
           aria-label="Go back to game hub"
-          className="flex items-center justify-center rounded-2xl"
+          className="flex items-center justify-center rounded-2xl active:scale-95 active:opacity-75 transition-all"
           style={{
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             color: 'rgb(var(--color-text-secondary))',
             background: 'rgba(var(--color-primary),0.07)',
           }}
@@ -49,10 +49,10 @@ export function GameHeader({ title, onBack, onReset, syncTrigger, children }: Ga
           <button
             onClick={onReset}
             aria-label="Restart game"
-            className="flex items-center justify-center rounded-2xl"
+            className="flex items-center justify-center rounded-2xl active:scale-95 active:opacity-75 transition-all"
             style={{
-              width: 44,
-              height: 44,
+              width: 56,
+              height: 56,
               color: 'rgb(var(--color-text-secondary))',
               background: 'rgba(var(--color-primary),0.07)',
             }}

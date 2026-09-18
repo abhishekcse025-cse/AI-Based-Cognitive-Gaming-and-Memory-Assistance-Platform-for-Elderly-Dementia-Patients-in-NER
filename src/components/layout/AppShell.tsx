@@ -21,10 +21,9 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* MIRA Floating Action Button — mounted once globally */}
       <MiraFloatingButton
         state={session.state}
-        onActivate={activate}
+        onActivate={() => { activate(); alert('MIRA Voice Assistant Activated'); }}
       />
 
       {/* MIRA Conversational Panel */}

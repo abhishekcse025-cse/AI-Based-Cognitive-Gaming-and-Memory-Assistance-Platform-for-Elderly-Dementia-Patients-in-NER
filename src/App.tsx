@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AccessibilityProvider } from './context/AccessibilityContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { AppShell } from './components/layout/AppShell';
 import { PatientLayout } from './components/layout/PatientLayout';
 import { PatientHomeScreen } from './components/patient/PatientHomeScreen';
@@ -28,7 +29,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <AccessibilityProvider>
-        <AppShell>
+        <LanguageProvider>
+          <AppShell>
           <Routes>
             {/* ── Patient Home ────────────────────────────────────────────── */}
             <Route
@@ -58,6 +60,7 @@ export default function App() {
             <Route path="/dashboard"  element={<CaregiverDashboard />} />
           </Routes>
         </AppShell>
+        </LanguageProvider>
       </AccessibilityProvider>
     </BrowserRouter>
   );

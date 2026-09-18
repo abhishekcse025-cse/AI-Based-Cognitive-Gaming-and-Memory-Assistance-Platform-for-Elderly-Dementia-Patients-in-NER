@@ -74,7 +74,7 @@ export function PatientHomeScreen() {
             onPointerLeave={handleLockPressEnd}
             aria-label="Caregiver access — hold to open"
             title="Hold to open Caregiver Dashboard"
-            className="flex items-center justify-center rounded-xl w-10 h-10 transition-opacity"
+            className="flex items-center justify-center rounded-xl w-10 h-10 transition-all active:scale-90 active:opacity-60"
             style={{
               color: 'rgb(var(--color-text-secondary))',
               opacity: 0.25,
@@ -86,7 +86,7 @@ export function PatientHomeScreen() {
           <button
             onClick={() => setIsA11yOpen(true)}
             aria-label="Open accessibility settings"
-            className="flex items-center justify-center rounded-2xl w-14 h-14 transition-colors"
+            className="flex items-center justify-center rounded-2xl w-14 h-14 transition-all active:scale-95 active:opacity-80"
             style={{
               background: 'rgba(var(--color-surface-card), 0.8)',
               backdropFilter: 'blur(12px)',

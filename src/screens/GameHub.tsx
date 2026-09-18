@@ -65,7 +65,7 @@ export function GameHub() {
         <button
           onClick={() => navigate('/')}
           aria-label="Go back to Home"
-          className="flex items-center justify-center rounded-2xl w-14 h-14 transition-colors hover:bg-[rgba(var(--color-primary),0.08)]"
+          className="flex items-center justify-center rounded-2xl w-14 h-14 transition-all active:scale-95 active:opacity-75 hover:bg-[rgba(var(--color-primary),0.08)]"
           style={{ color: 'rgb(var(--color-text-secondary))' }}
         >
           <ArrowLeft className="w-7 h-7" />

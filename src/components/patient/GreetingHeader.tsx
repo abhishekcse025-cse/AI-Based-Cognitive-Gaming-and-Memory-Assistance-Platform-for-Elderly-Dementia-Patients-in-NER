@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTimeOfDayGreeting } from '../../hooks/useTimeOfDayGreeting';
+import { useLanguage } from '../../context/LanguageContext';
 import type { PatientProfile } from '../../types/types';
 
 interface GreetingHeaderProps {
@@ -7,11 +8,13 @@ interface GreetingHeaderProps {
 }
 
 /**
- * Time-aware greeting header with current date.
- * Large typography, warm emoji, friendly subtext.
+ * Time-aware, localised greeting header.
+ * Uses the language selected in Settings to translate the greeting, subtext, and prompt.
  */
 export function GreetingHeader({ patient }: GreetingHeaderProps) {
-  const { greeting, emoji, subtext } = useTimeOfDayGreeting();
+  const { greetingKey, subtextKey, emoji } = useTimeOfDayGreeting();
+  const { t } = useLanguage();
+
   const name = patient?.displayName ?? 'Friend';
 
   const today = new Date().toLocaleDateString('en-IN', {
@@ -50,7 +53,7 @@ export function GreetingHeader({ patient }: GreetingHeaderProps) {
           className="font-extrabold leading-tight text-[rgb(var(--color-text-primary))]"
           style={{ fontSize: 'var(--text-4xl)', fontFamily: 'Nunito, Inter, sans-serif' }}
         >
-          {greeting}
+          {t(greetingKey)}
           <span className="ml-3" aria-hidden="true">
             {emoji}
           </span>
@@ -71,10 +74,10 @@ export function GreetingHeader({ patient }: GreetingHeaderProps) {
         className="mt-3 text-[rgb(var(--color-text-secondary))]"
         style={{ fontSize: 'var(--text-lg)' }}
       >
-        {subtext}
+        {t(subtextKey)}
       </motion.p>
 
-      {/* Prompt */}
+      {/* Prompt — fully translated */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -82,7 +85,7 @@ export function GreetingHeader({ patient }: GreetingHeaderProps) {
         className="mt-2 font-semibold text-[rgb(var(--color-text-primary))]"
         style={{ fontSize: 'var(--text-xl)' }}
       >
-        What would you like to do?
+        {t('prompt')}
       </motion.p>
     </motion.header>
   );

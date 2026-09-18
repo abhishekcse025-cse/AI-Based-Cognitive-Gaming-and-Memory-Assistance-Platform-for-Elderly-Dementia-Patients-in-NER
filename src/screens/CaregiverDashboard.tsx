@@ -226,7 +226,7 @@ export function CaregiverDashboard() {
             </p>
             <button
               onClick={load}
-              className="font-bold rounded-3xl text-white px-8"
+              className="font-bold rounded-3xl text-white px-8 active:scale-95 active:opacity-80 transition-all"
               style={{ height: 56, fontSize: 'var(--text-base)', background: 'rgb(var(--color-secondary))' }}
             >
               Try Again

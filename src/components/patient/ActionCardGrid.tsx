@@ -1,45 +1,23 @@
 import { motion } from 'framer-motion';
 import type { PatientActionCardData, PatientActionType } from '../../types/types';
 import { ActionCard } from './ActionCard';
+import { useLanguage } from '../../context/LanguageContext';
 
-// ─── Action Card Data ─────────────────────────────────────────────────────────
+// ─── Card skeleton (labels are dynamic, filled below) ────────────────────────
 
-const ACTION_CARDS: PatientActionCardData[] = [
-  {
-    id: 'play',
-    label: 'Play',
-    icon: 'Gamepad2',
-    route: '/play',
-    colorToken: 'card-play',
-  },
-  {
-    id: 'my_day',
-    label: 'My Day',
-    icon: 'CalendarDays',
-    route: '/my-day',
-    colorToken: 'card-myday',
-  },
-  {
-    id: 'reminders',
-    label: 'Reminders',
-    icon: 'Bell',
-    route: '/reminders',
-    colorToken: 'card-reminders',
-  },
-  {
-    id: 'family',
-    label: 'Family',
-    icon: 'Users',
-    route: '/family',
-    colorToken: 'card-family',
-  },
-  {
-    id: 'talk_to_mira',
-    label: 'Talk to MIRA',
-    icon: 'MessageCircleHeart',
-    route: '/mira',
-    colorToken: 'card-mira',
-  },
+interface CardSkeleton {
+  id: PatientActionType;
+  icon: string;
+  route: string;
+  colorToken: string;
+}
+
+const CARD_SKELETONS: CardSkeleton[] = [
+  { id: 'play',         icon: 'Gamepad2',          route: '/play',      colorToken: 'card-play' },
+  { id: 'my_day',       icon: 'CalendarDays',       route: '/my-day',    colorToken: 'card-myday' },
+  { id: 'reminders',    icon: 'Bell',               route: '/reminders', colorToken: 'card-reminders' },
+  { id: 'family',       icon: 'Users',              route: '/family',    colorToken: 'card-family' },
+  { id: 'talk_to_mira', icon: 'MessageCircleHeart', route: '/mira',      colorToken: 'card-mira' },
 ];
 
 interface ActionCardGridProps {
@@ -48,12 +26,31 @@ interface ActionCardGridProps {
 
 /**
  * 2-column grid of 5 large action cards.
- * Last card (Talk to MIRA) spans full width for visual emphasis.
- * Cards animate in with staggered entrance.
+ * Labels are translated via LanguageContext — switching language in Settings
+ * updates the cards instantly without any page reload.
  */
 export function ActionCardGrid({ onCardSelect }: ActionCardGridProps) {
-  const regularCards = ACTION_CARDS.slice(0, 4);
-  const miraCard = ACTION_CARDS[4];
+  const { t } = useLanguage();
+
+  // Map dictionary key per card ID
+  const labelFor = (id: PatientActionType): string => {
+    switch (id) {
+      case 'play':         return t('play');
+      case 'my_day':       return t('myDay');
+      case 'reminders':    return t('reminders');
+      case 'family':       return t('family');
+      case 'talk_to_mira': return t('mira');
+      default:             return id;
+    }
+  };
+
+  const cards: PatientActionCardData[] = CARD_SKELETONS.map(s => ({
+    ...s,
+    label: labelFor(s.id),
+  }));
+
+  const regularCards = cards.slice(0, 4);
+  const miraCard     = cards[4];
 
   return (
     <section

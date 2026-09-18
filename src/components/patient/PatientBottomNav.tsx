@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Home, Gamepad2, MessageCircleHeart, BookImage, MoreHorizontal, type LucideProps } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 type LucideIcon = React.FC<LucideProps>;
 
@@ -12,14 +13,6 @@ interface NavItem {
   ariaLabel: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { id: 'home', label: 'Home', Icon: Home, ariaLabel: 'Go to Home' },
-  { id: 'play', label: 'Play', Icon: Gamepad2, ariaLabel: 'Go to Games' },
-  { id: 'mira', label: 'MIRA', Icon: MessageCircleHeart, ariaLabel: 'Talk to MIRA' },
-  { id: 'memories', label: 'Memories', Icon: BookImage, ariaLabel: 'View Memories' },
-  { id: 'more', label: 'More', Icon: MoreHorizontal, ariaLabel: 'More options' },
-];
-
 interface PatientBottomNavProps {
   activeTab: string;
   onTabChange?: (tab: string) => void;
@@ -27,10 +20,21 @@ interface PatientBottomNavProps {
 
 /**
  * Persistent patient bottom navigation: Home / Play / MIRA / Memories / More
- * 80px height, large icons + labels. Sliding active indicator via Framer Motion layoutId.
+ * 80px height, large icons + labels. Fully localised via LanguageContext.
+ * Sliding active indicator via Framer Motion layoutId.
  */
 export function PatientBottomNav({ activeTab, onTabChange }: PatientBottomNavProps) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
+  // Labels are computed from the dictionary so they update when language changes
+  const NAV_ITEMS: NavItem[] = [
+    { id: 'home',     label: t('nav.home'),     Icon: Home,             ariaLabel: 'Go to Home' },
+    { id: 'play',     label: t('nav.play'),     Icon: Gamepad2,         ariaLabel: 'Go to Games' },
+    { id: 'mira',     label: t('nav.mira'),     Icon: MessageCircleHeart, ariaLabel: 'Talk to MIRA' },
+    { id: 'memories', label: t('nav.memories'), Icon: BookImage,        ariaLabel: 'View Memories' },
+    { id: 'more',     label: t('nav.more'),     Icon: MoreHorizontal,   ariaLabel: 'More options' },
+  ];
 
   const handleTabPress = (id: string) => {
     switch (id) {
