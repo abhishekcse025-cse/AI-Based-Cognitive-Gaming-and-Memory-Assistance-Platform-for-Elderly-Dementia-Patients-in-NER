@@ -116,6 +116,55 @@ export async function fetchAnalytics(): Promise<AnalyticsData> {
   return response.json() as Promise<AnalyticsData>;
 }
 
+// ── Local analytics (no backend needed) ──────────────────────────────────────
+
+/**
+ * Builds the same AnalyticsData shape entirely from localStorage sessions.
+ * Used when the backend is unavailable — the dashboard always shows real data.
+ */
+export function buildLocalAnalytics(): AnalyticsData {
+  const sessions = getSessions();
+
+  function statsFor(gameId: 'MEMORY_MATCH' | 'DAILY_SEQUENCE'): GameStats {
+    const gameSessions = sessions
+      .filter(s => s.game === gameId)
+      .slice(-10);                      // last 10, same window as backend
+
+    if (gameSessions.length === 0) {
+      return { labels: [], raw_time: [], raw_errors: [], moving_avg_time: [], moving_avg_errors: [] };
+    }
+
+    const labels        = gameSessions.map((_, i) => `#${i + 1}`);
+    const raw_time      = gameSessions.map(s => s.time_taken_sec);
+    const raw_errors    = gameSessions.map(s => s.error_count);
+
+    // 3-session moving average
+    const movingAvg = (arr: number[]) =>
+      arr.map((_, i) => {
+        const window = arr.slice(Math.max(0, i - 2), i + 1);
+        return Math.round((window.reduce((a, b) => a + b, 0) / window.length) * 10) / 10;
+      });
+
+    return {
+      labels,
+      raw_time,
+      raw_errors,
+      moving_avg_time:   movingAvg(raw_time),
+      moving_avg_errors: movingAvg(raw_errors),
+    };
+  }
+
+  // Attention flag: last 3 sessions (any game) all have error_count > 4
+  const recent3 = sessions.slice(-3);
+  const attention_needed = recent3.length === 3 && recent3.every(s => s.error_count > 4);
+
+  return {
+    attention_needed,
+    MEMORY_MATCH:   statsFor('MEMORY_MATCH'),
+    DAILY_SEQUENCE: statsFor('DAILY_SEQUENCE'),
+  };
+}
+
 // ── Auto-triggers ─────────────────────────────────────────────────────────────
 
 window.addEventListener('online',  () => syncPendingSessions());

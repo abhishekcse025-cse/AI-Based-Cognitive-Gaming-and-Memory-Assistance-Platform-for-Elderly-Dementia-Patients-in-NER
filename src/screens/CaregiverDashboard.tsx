@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'recharts';
 import { ArrowLeft, AlertTriangle, BarChart2, RefreshCw } from 'lucide-react';
-import { type AnalyticsData, fetchAnalytics } from '../services/syncService';
+import { type AnalyticsData, fetchAnalytics, buildLocalAnalytics } from '../services/syncService';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -62,16 +62,27 @@ export function CaregiverDashboard() {
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [data,      setData]      = useState<AnalyticsData | null>(null);
   const [lastFetch, setLastFetch] = useState<string>('');
+  const [isLocalData, setIsLocalData] = useState(false);
 
   const load = async () => {
     setLoadState('loading');
+
+    // ── Step 1: Instantly show local data from localStorage (always available) ─
+    const localData = buildLocalAnalytics();
+    setData(localData);
+    setIsLocalData(true);
+    setLoadState('success');
+
+    // ── Step 2: Try to enrich from backend (optional enhancement) ────────────
+    if (!navigator.onLine) return;
     try {
-      const result = await fetchAnalytics();
-      setData(result);
+      const serverData = await fetchAnalytics();
+      setData(serverData);
+      setIsLocalData(false);
       setLastFetch(new Date().toLocaleTimeString('en-IN'));
-      setLoadState('success');
-    } catch (err) {
-      setLoadState(navigator.onLine ? 'error' : 'offline');
+    } catch {
+      // Backend unavailable — local data is already shown, no error state needed
+      setLastFetch('Local data');
     }
   };
 
@@ -181,9 +192,9 @@ export function CaregiverDashboard() {
       {/* ── Body ──────────────────────────────────────────────────────────── */}
       <main className="px-5 pb-12 pt-4 space-y-6">
 
-        {/* Loading */}
+        {/* Loading spinner — only shown for the brief first render */}
         {loadState === 'loading' && (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -191,52 +202,67 @@ export function CaregiverDashboard() {
               <BarChart2 className="w-10 h-10" style={{ color: 'rgb(var(--color-primary))' }} />
             </motion.div>
             <p style={{ fontSize: 'var(--text-lg)', color: 'rgb(var(--color-text-secondary))' }}>
-              Loading patient insights…
+              Reading game data…
             </p>
           </div>
         )}
 
-        {/* Error / Offline */}
-        {(loadState === 'error' || loadState === 'offline') && (
+        {/* ── Local data source banner ─────────────────────────────────────── */}
+        {loadState === 'success' && isLocalData && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl p-6 text-center"
+            className="flex items-center gap-3 rounded-2xl px-4 py-3"
             style={{
-              background: 'rgba(249,115,22,0.08)',
-              border: '1.5px solid rgba(249,115,22,0.25)',
+              background: 'rgba(124,92,252,0.07)',
+              border: '1.5px solid rgba(124,92,252,0.18)',
             }}
           >
-            <p className="text-4xl mb-3" aria-hidden="true">
-              {loadState === 'offline' ? '📶' : '🔌'}
-            </p>
-            <p
-              className="font-bold text-[rgb(var(--color-text-primary))] mb-1"
-              style={{ fontSize: 'var(--text-xl)' }}
-            >
-              {loadState === 'offline' ? 'You are offline' : 'Backend not reachable'}
-            </p>
-            <p
-              className="text-[rgb(var(--color-text-secondary))] mb-4"
-              style={{ fontSize: 'var(--text-base)' }}
-            >
-              {loadState === 'offline'
-                ? 'Connect to the network to view care insights.'
-                : 'Make sure the COGNIVA backend is running on port 5000.'}
-            </p>
-            <button
-              onClick={load}
-              className="font-bold rounded-3xl text-white px-8 active:scale-95 active:opacity-80 transition-all"
-              style={{ height: 56, fontSize: 'var(--text-base)', background: 'rgb(var(--color-secondary))' }}
-            >
-              Try Again
-            </button>
+            <span className="text-xl" aria-hidden="true">📱</span>
+            <div>
+              <p className="font-semibold text-[rgb(var(--color-text-primary))]" style={{ fontSize: 'var(--text-sm)' }}>
+                Showing data from this device
+              </p>
+              <p className="text-[rgb(var(--color-text-secondary))]" style={{ fontSize: 'var(--text-xs)' }}>
+                Backend not connected — charts use game data saved locally.
+              </p>
+            </div>
           </motion.div>
         )}
 
-        {/* Success */}
+        {/* ── No sessions yet ──────────────────────────────────────────────── */}
+        {loadState === 'success' && data && (
+          data.MEMORY_MATCH.labels.length === 0 && data.DAILY_SEQUENCE.labels.length === 0
+        ) && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-3xl p-8 text-center"
+            style={{ background: 'rgb(var(--color-surface-card))', boxShadow: 'var(--shadow-card)' }}
+          >
+            <p className="text-5xl mb-4" aria-hidden="true">🎮</p>
+            <p className="font-bold text-[rgb(var(--color-text-primary))] mb-2" style={{ fontSize: 'var(--text-xl)' }}>
+              No game sessions yet
+            </p>
+            <p className="text-[rgb(var(--color-text-secondary))]" style={{ fontSize: 'var(--text-base)' }}>
+              Charts will appear here after the patient plays Memory Match or Daily Sequence.
+            </p>
+            <motion.button
+              onClick={() => navigate('/games')}
+              whileTap={{ scale: 0.96 }}
+              className="mt-5 font-bold rounded-3xl text-white px-8 active:scale-95 transition-all"
+              style={{ height: 56, fontSize: 'var(--text-base)', background: 'rgb(var(--color-primary))' }}
+            >
+              Go to Games →
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Success — charts */}
         <AnimatePresence>
           {loadState === 'success' && data && (
+            data.MEMORY_MATCH.labels.length > 0 || data.DAILY_SEQUENCE.labels.length > 0
+          ) && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
